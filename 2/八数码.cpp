@@ -132,7 +132,7 @@ private:
 		{
 			for (int j = 0; j < size; ++j)
 			{
-				int pos = posMap[board[i][j]];
+				int pos = posMap[target[i][j]];
 				int x = pos / size;
 				int y = pos % size;
 				sum += abs(x - i) + abs(y - j);
@@ -201,6 +201,7 @@ int main()
 	};
 
 	
+	
 	while (true)
 	{
 		cout << "估价函数\n 0:BFS\n 1:错位数\n 2:错位距离和\n";
@@ -229,10 +230,12 @@ int main()
 void Solve(vector<vector<int>> start, vector<vector<int>> target, MODE mode)
 {
 	//int mode = MODE::WRONG_POSITION; //估价函数
-
+	
 	//初始化起始节点
 	shared_ptr<Node> startNode(new Node(std::move(start)));
 	startNode->target = std::move(target);
+	
+	
 	boardMap[(*startNode).ToString()] = true;
 
 	//节点open表，使用优先队列实现
