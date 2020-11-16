@@ -200,15 +200,36 @@ int main()
 		{7, 6, 5}
 	};
 
-	//搜索解
-	Solve(start2,targetBoard,MODE::WRONG_POSITION);
 	
+	while (true)
+	{
+		cout << "估价函数\n 0:BFS\n 1:错位数\n 2:错位距离和\n";
+		cout << "输入估价函数：";
+		int op;
+		cin >> op;
+		if (op == 0)
+		{
+			//搜索解
+			Solve(start2, targetBoard, MODE::BFS);
+		}
+		else if (op == 1)
+		{
+			Solve(start2, targetBoard, MODE::WRONG_POSITION);
+		}
+		else if (op == 2)
+		{
+			Solve(start2, targetBoard, MODE::DISTANCE_BETWEEN_WRONG_POSITION);
+		}
+		boardMap.clear();
+		generatingNodeCounter = 0;
+		expandingNodeCounter = 0;
+	}
 }
 
 void Solve(vector<vector<int>> start, vector<vector<int>> target, MODE mode)
 {
 	//int mode = MODE::WRONG_POSITION; //估价函数
-	
+
 	//初始化起始节点
 	shared_ptr<Node> startNode(new Node(std::move(start)));
 	startNode->target = std::move(target);
@@ -225,24 +246,22 @@ void Solve(vector<vector<int>> start, vector<vector<int>> target, MODE mode)
 	while (!openedList.empty())
 	{
 		auto frontChessBoard = openedList.top();
+		auto totalStep = frontChessBoard.pNode->step;
 		openedList.pop();
 		//判断是否搜索到目标状态
 		if (frontChessBoard.pNode->isTarget())
 		{
 			//搜索完成时间
 			auto clockTime = clock() - startClock;
-			cout << "Solved in " << static_cast<double>(clockTime) / CLOCKS_PER_SEC << "s." << endl;
-			cout << "Total step：" << frontChessBoard.pNode->step << endl;
-			cout << "Number of extension nodes: " << expandingNodeCounter << endl;
-			cout << "Number of generated nodes: " << generatingNodeCounter << endl;
-			cout << endl;
+			
 			//将节点压栈倒推路径
 			stack<shared_ptr<Node>> nodeStack;
 			do
 			{
 				nodeStack.push(frontChessBoard.pNode);
 				frontChessBoard = frontChessBoard.pNode->parent;
-			} while (frontChessBoard.pNode != nullptr);
+			}
+			while (frontChessBoard.pNode != nullptr);
 
 			while (!nodeStack.empty())
 			{
@@ -255,7 +274,14 @@ void Solve(vector<vector<int>> start, vector<vector<int>> target, MODE mode)
 				node->Print();
 				cout << endl;
 			}
-
+			
+			//输出信息
+			cout << "Solved in " << static_cast<double>(clockTime) / CLOCKS_PER_SEC << "s." << endl;
+			cout << "Total step：" << totalStep << endl;
+			cout << "Number of extension nodes: " << expandingNodeCounter << endl;
+			cout << "Number of generated nodes: " << generatingNodeCounter << endl;
+			cout << endl;
+			
 			return;
 		}
 
