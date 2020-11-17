@@ -342,7 +342,3 @@ void GenerateNode(priority_queue<ChessBoard>& queue, ChessBoard& frontChessBoard
 	}
 }
 
-/*
- *不在位距离和的计算消耗资源较多或该估价函数根本不合适，性能要差于BFS
- *
- */
